@@ -115,6 +115,7 @@ void MainWindow::on_btnCalculate_clicked()
         }
 
         ui->labelResult->setText(result_text);
+        lastDeterminantResult = result_text;
 
     } 
     catch (const std::exception& e) 
@@ -138,9 +139,21 @@ void MainWindow::on_btnImport_clicked()
     std::vector<std::vector<std::string>> data;
     std::string line;
     
-    while (std::getline(file, line)) 
+    while (std::getline(file, line))
     {
-        std::replace(line.begin(), line.end(), ',', ' '); 
+        size_t firstSymbol = line.find_first_not_of(" \t\r\n");
+
+        if (firstSymbol == std::string::npos)
+        {
+            continue;
+        }
+
+        if (line[firstSymbol] == '#')
+        {
+            continue;
+        }
+
+        std::replace(line.begin(), line.end(), ',', ' ');
         std::stringstream ss(line);
         std::string val;
         std::vector<std::string> row;
@@ -204,30 +217,83 @@ void MainWindow::on_btnImport_clicked()
 
 void MainWindow::on_btnExport_clicked()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить матрицу", "", "Text Files (*.txt);;CSV Files (*.csv)");
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        "Сохранить данные",
+        "",
+        "Text Files (*.txt);;CSV Files (*.csv)"
+    );
+
     if (fileName.isEmpty()) return;
 
     std::ofstream file(fileName.toStdString());
-    if (!file.is_open()) 
+
+    if (!file.is_open())
     {
         QMessageBox::critical(this, "Ошибка", "Не удалось создать файл");
         return;
     }
 
     int size = ui->tableWidget->rowCount();
-    bool isCsv = fileName.endsWith(".csv");
+    bool isCsv = fileName.endsWith(".csv", Qt::CaseInsensitive);
+    std::string separator = isCsv ? "," : " ";
 
-    for (int i = 0; i < size; ++i) 
+    file << "# Matrix A\n";
+
+    for (int i = 0; i < size; ++i)
     {
-        for (int j = 0; j < size; ++j) 
+        for (int j = 0; j < size; ++j)
         {
             QTableWidgetItem *item = ui->tableWidget->item(i, j);
-            QString text = (item && !item->text().trimmed().isEmpty()) ? item->text() : "0";
+            QString text = (item && !item->text().trimmed().isEmpty())
+                               ? item->text()
+                               : "0";
+
             file << text.toStdString();
-            if (j < size - 1) file << (isCsv ? "," : " ");
+
+            if (j < size - 1)
+            {
+                file << separator;
+            }
         }
+
         file << "\n";
     }
+
+    file << "\n# Vector B\n";
+
+    for (int i = 0; i < size; ++i)
+    {
+        QTableWidgetItem *item = ui->tableVectorB->item(i, 0);
+        QString text = (item && !item->text().trimmed().isEmpty())
+                           ? item->text()
+                           : "0";
+
+        file << text.toStdString() << "\n";
+    }
+
+    file << "\n# Results\n";
+
+    bool hasResults = false;
+
+    if (!lastDeterminantResult.isEmpty())
+    {
+        file << "# " << lastDeterminantResult.toStdString() << "\n";
+        hasResults = true;
+    }
+
+    if (!lastSlaeResult.isEmpty())
+    {
+        file << "# " << lastSlaeResult.toStdString() << "\n";
+        hasResults = true;
+    }
+
+    if (!hasResults)
+    {
+        file << "# Результаты еще не вычислялись\n";
+    }
+
+    QMessageBox::information(this, "Сохранение", "Данные успешно сохранены в файл.");
 }
 
 void MainWindow::on_spinBoxSize_valueChanged(int size)
@@ -276,6 +342,7 @@ void MainWindow::on_btnSolve_clicked()
         res += ")";
         ui->labelResult->setText(res);
         ui->labelResult->setStyleSheet("color: #00FF00;");
+        lastSlaeResult = res;
     } 
     catch (const std::exception& e) 
     {

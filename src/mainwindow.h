@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "../include/matrix.hpp"
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,6 +26,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QString lastDeterminantResult;
+    QString lastSlaeResult;
 };
 
 #endif 
