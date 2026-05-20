@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QComboBox>
 #include "../include/matrix.hpp"
 #include <QString>
 
@@ -26,6 +27,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QComboBox *comboBackend;
+
+    matrix::CalculationBackend selectedBackend() const;
 
     QString lastDeterminantResult;
     QString lastSlaeResult;

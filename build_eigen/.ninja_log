@@ -1,0 +1,25 @@
+# ninja log v5
+3	81	1779298842986741448	a.out_autogen/timestamp	51101e1bb77ea06
+3	81	1779298842986741448	a.out_autogen/mocs_compilation.cpp	51101e1bb77ea06
+3	81	1779298842986741448	/home/fedor/Рабочий стол/finalProject/build_eigen/a.out_autogen/timestamp	51101e1bb77ea06
+3	81	1779298842986741448	/home/fedor/Рабочий стол/finalProject/build_eigen/a.out_autogen/mocs_compilation.cpp	51101e1bb77ea06
+3	86	1779298842990740114	tests_autogen/timestamp	c4b8c3ffa3755bba
+3	86	1779298842990740114	tests_autogen/mocs_compilation.cpp	c4b8c3ffa3755bba
+3	86	1779298842990740114	/home/fedor/Рабочий стол/finalProject/build_eigen/tests_autogen/timestamp	c4b8c3ffa3755bba
+3	86	1779298842990740114	/home/fedor/Рабочий стол/finalProject/build_eigen/tests_autogen/mocs_compilation.cpp	c4b8c3ffa3755bba
+81	109	1779298843034725802	CMakeFiles/a.out.dir/a.out_autogen/mocs_compilation.cpp.o	e8fd9abbdc1c258b
+86	115	1779298843040723867	CMakeFiles/tests.dir/tests_autogen/mocs_compilation.cpp.o	92aa1e1c077b5161
+4	1116	1779298844024406756	matrix_gui_autogen/timestamp	f7f0d69ba216acf0
+4	1116	1779298844024406756	matrix_gui_autogen/mocs_compilation.cpp	f7f0d69ba216acf0
+4	1116	1779298844024406756	/home/fedor/Рабочий стол/finalProject/build_eigen/matrix_gui_autogen/timestamp	f7f0d69ba216acf0
+4	1116	1779298844024406756	/home/fedor/Рабочий стол/finalProject/build_eigen/matrix_gui_autogen/mocs_compilation.cpp	f7f0d69ba216acf0
+1116	5920	1779298848845998009	CMakeFiles/matrix_gui.dir/matrix_gui_autogen/mocs_compilation.cpp.o	f793c8bce94c9b9
+1117	5993	1779298848919977883	CMakeFiles/matrix_gui.dir/src/main_gui.cpp.o	90466a46b2e4d602
+82	6516	1779298849434841790	CMakeFiles/a.out.dir/main.cpp.o	f28018654b3f36dc
+6516	6650	1779298849574804998	a.out	f24f51bb8517a702
+86	9126	1779298852040184356	CMakeFiles/tests.dir/tests/test_main.cpp.o	e932403fbaf4c2fa
+9126	9328	1779298852254133650	tests	8618586bd709601a
+9126	9328	1779298852254133650	tests[1]_tests.cmake	8618586bd709601a
+9126	9328	1779298852254133650	/home/fedor/Рабочий стол/finalProject/build_eigen/tests[1]_tests.cmake	8618586bd709601a
+1118	10703	1779298853618815213	CMakeFiles/matrix_gui.dir/src/mainwindow.cpp.o	8dc92b96c410372e
+10703	11219	1779298854140696840	matrix_gui	59d10abfbdf45cd

@@ -1,0 +1,37 @@
+# ninja log v5
+1	43	1779297128394132501	a.out_autogen/timestamp	fc1d6e9f3fb3ab90
+1	43	1779297128394132501	a.out_autogen/mocs_compilation.cpp	fc1d6e9f3fb3ab90
+1	43	1779297128394132501	/home/fedor/Рабочий стол/finalProject/build_debug/a.out_autogen/timestamp	fc1d6e9f3fb3ab90
+1	43	1779297128394132501	/home/fedor/Рабочий стол/finalProject/build_debug/a.out_autogen/mocs_compilation.cpp	fc1d6e9f3fb3ab90
+2	44	1779297128394132501	tests_autogen/timestamp	497b4bc74e20d52d
+2	44	1779297128394132501	tests_autogen/mocs_compilation.cpp	497b4bc74e20d52d
+2	44	1779297128394132501	/home/fedor/Рабочий стол/finalProject/build_debug/tests_autogen/timestamp	497b4bc74e20d52d
+2	44	1779297128394132501	/home/fedor/Рабочий стол/finalProject/build_debug/tests_autogen/mocs_compilation.cpp	497b4bc74e20d52d
+44	57	1779297128418127519	CMakeFiles/tests.dir/tests_autogen/mocs_compilation.cpp.o	215f7ef6d858d497
+44	58	1779297128418127519	CMakeFiles/a.out.dir/a.out_autogen/mocs_compilation.cpp.o	63fa953c8aff88b5
+2	309	1779297128657077904	matrix_gui_autogen/timestamp	3417e7f4033ec9cb
+2	309	1779297128657077904	matrix_gui_autogen/mocs_compilation.cpp	3417e7f4033ec9cb
+2	309	1779297128657077904	/home/fedor/Рабочий стол/finalProject/build_debug/matrix_gui_autogen/timestamp	3417e7f4033ec9cb
+2	309	1779297128657077904	/home/fedor/Рабочий стол/finalProject/build_debug/matrix_gui_autogen/mocs_compilation.cpp	3417e7f4033ec9cb
+44	671	1779297129031000293	CMakeFiles/a.out.dir/main.cpp.o	f1c0ee4d60e898e8
+671	780	1779297129138977973	a.out	e8ba2a45186317ee
+45	2047	1779297130402717114	CMakeFiles/tests.dir/tests/test_main.cpp.o	90007beb236ec4dd
+2047	2203	1779297130562684194	tests	678a183e3f87b572
+2047	2203	1779297130562684194	tests[1]_tests.cmake	678a183e3f87b572
+2047	2203	1779297130562684194	/home/fedor/Рабочий стол/finalProject/build_debug/tests[1]_tests.cmake	678a183e3f87b572
+309	2946	1779297131304531798	CMakeFiles/matrix_gui.dir/src/main_gui.cpp.o	6066d2e23ea9e071
+309	3025	1779297131384515410	CMakeFiles/matrix_gui.dir/matrix_gui_autogen/mocs_compilation.cpp.o	9c2ebdaacb5a3e06
+310	3746	1779297132102368415	CMakeFiles/matrix_gui.dir/src/mainwindow.cpp.o	71803ee7c04837c7
+3746	4235	1779297132588269286	matrix_gui	d55f52d1ac6e1c79
+34	94	1779310708639195583	a.out_autogen/timestamp	fc1d6e9f3fb3ab90
+34	94	1779310708639195583	a.out_autogen/mocs_compilation.cpp	fc1d6e9f3fb3ab90
+34	94	1779310708639195583	/home/fedor/Рабочий стол/finalProject/build_debug/a.out_autogen/timestamp	fc1d6e9f3fb3ab90
+34	94	1779310708639195583	/home/fedor/Рабочий стол/finalProject/build_debug/a.out_autogen/mocs_compilation.cpp	fc1d6e9f3fb3ab90
+35	96	1779310708640195743	matrix_gui_autogen/timestamp	3417e7f4033ec9cb
+35	96	1779310708640195743	matrix_gui_autogen/mocs_compilation.cpp	3417e7f4033ec9cb
+35	96	1779310708640195743	/home/fedor/Рабочий стол/finalProject/build_debug/matrix_gui_autogen/timestamp	3417e7f4033ec9cb
+35	96	1779310708640195743	/home/fedor/Рабочий стол/finalProject/build_debug/matrix_gui_autogen/mocs_compilation.cpp	3417e7f4033ec9cb
+96	1591	1779310710134408859	CMakeFiles/a.out.dir/main.cpp.o	f1c0ee4d60e898e8
+1591	1756	1779310710300428805	a.out	e8ba2a45186317ee
+99	5293	1779310713833769138	CMakeFiles/matrix_gui.dir/src/mainwindow.cpp.o	71803ee7c04837c7
+5294	5914	1779310714449811186	matrix_gui	d55f52d1ac6e1c79

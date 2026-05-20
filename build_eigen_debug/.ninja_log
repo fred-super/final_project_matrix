@@ -1,0 +1,25 @@
+# ninja log v5
+2	43	1779297024123330845	a.out_autogen/timestamp	59685ee1fe39ce77
+2	43	1779297024123330845	a.out_autogen/mocs_compilation.cpp	59685ee1fe39ce77
+2	43	1779297024123330845	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/a.out_autogen/timestamp	59685ee1fe39ce77
+2	43	1779297024123330845	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/a.out_autogen/mocs_compilation.cpp	59685ee1fe39ce77
+2	44	1779297024123330845	tests_autogen/timestamp	aa530c128a478e7c
+2	44	1779297024123330845	tests_autogen/mocs_compilation.cpp	aa530c128a478e7c
+2	44	1779297024123330845	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/tests_autogen/timestamp	aa530c128a478e7c
+2	44	1779297024123330845	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/tests_autogen/mocs_compilation.cpp	aa530c128a478e7c
+44	58	1779297024147319958	CMakeFiles/tests.dir/tests_autogen/mocs_compilation.cpp.o	66925958aa61861
+44	59	1779297024148319504	CMakeFiles/a.out.dir/a.out_autogen/mocs_compilation.cpp.o	66c440c25576908a
+3	727	1779297024807020550	matrix_gui_autogen/timestamp	e8dc7c64b22f637a
+3	727	1779297024807020550	matrix_gui_autogen/mocs_compilation.cpp	e8dc7c64b22f637a
+3	727	1779297024807020550	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/matrix_gui_autogen/timestamp	e8dc7c64b22f637a
+3	727	1779297024807020550	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/matrix_gui_autogen/mocs_compilation.cpp	e8dc7c64b22f637a
+44	3524	1779297027606772675	CMakeFiles/a.out.dir/main.cpp.o	8d9287e3c139e960
+3525	3686	1779297027773699269	a.out	e8ba2a45186317ee
+728	4299	1779297028386431577	CMakeFiles/matrix_gui.dir/matrix_gui_autogen/mocs_compilation.cpp.o	f5aaa827c6551717
+728	4318	1779297028406422877	CMakeFiles/matrix_gui.dir/src/main_gui.cpp.o	4f01d319cb929c20
+45	7997	1779297032064858511	CMakeFiles/tests.dir/tests/test_main.cpp.o	ebca45c1506dd224
+7998	8355	1779297032443700281	tests	f144b5c765193c50
+7998	8355	1779297032443700281	tests[1]_tests.cmake	f144b5c765193c50
+7998	8355	1779297032443700281	/home/fedor/Рабочий стол/finalProject/build_eigen_debug/tests[1]_tests.cmake	f144b5c765193c50
+728	9888	1779297033955073047	CMakeFiles/matrix_gui.dir/src/mainwindow.cpp.o	52c88ef55486adae
+9889	10558	1779297034637793414	matrix_gui	d55f52d1ac6e1c79

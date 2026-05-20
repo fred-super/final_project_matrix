@@ -8,12 +8,35 @@
 #include <algorithm>
 #include "../include/type_detector.h"
 #include <QStyle>
+#include <QComboBox>
+#include <QElapsedTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->spinBoxSize->setMinimum(1);
+    ui->spinBoxSize->setMaximum(500);
+
+    comboBackend = new QComboBox(this);
+
+    comboBackend->addItem(
+        "Собственный метод Гаусса",
+        static_cast<int>(matrix::CalculationBackend::OwnGauss)
+    );
+    
+    #ifdef USE_EIGEN
+    comboBackend->addItem(
+        "Eigen / открытая библиотека",
+        static_cast<int>(matrix::CalculationBackend::Eigen)
+    );
+    #else
+    comboBackend->setToolTip("Eigen недоступен. Соберите проект с флагом -DUSE_EIGEN=ON.");
+    #endif
+    
+    ui->verticalLayout->insertWidget(1, comboBackend);
 
     ui->btnImport->setText("Загрузить");
     ui->btnImport->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
@@ -30,6 +53,22 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+matrix::CalculationBackend MainWindow::selectedBackend() const
+{
+#ifdef USE_EIGEN
+    if (
+        comboBackend &&
+        comboBackend->currentData().toInt() ==
+            static_cast<int>(matrix::CalculationBackend::Eigen)
+    )
+    {
+        return matrix::CalculationBackend::Eigen;
+    }
+#endif
+
+    return matrix::CalculationBackend::OwnGauss;
 }
 
 
@@ -71,45 +110,87 @@ void MainWindow::on_btnCalculate_clicked()
 
         switch (final_type) 
         {
-            case matrix::DataType::Int: 
+            case matrix::DataType::Int:
             {
                 matrix::Matrix<int> mat(size, size);
-                for (int i = 0; i < size; ++i) 
+            
+                for (int i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j) 
+                    for (int j = 0; j < size; ++j)
                     {
                         mat.at(i, j) = ui->tableWidget->item(i, j)->text().toInt();
                     }
                 }
-                result_text += QString::number(mat.determinant()) + "  (Тип: int)";
+            
+                QElapsedTimer timer;
+                timer.start();
+            
+                auto det = mat.determinant(selectedBackend());
+            
+                qint64 elapsedNs = timer.nsecsElapsed();
+                double elapsedMs = static_cast<double>(elapsedNs) / 1000000.0;
+            
+                result_text += QString::number(det) + "  (Тип: int)";
+                result_text += "  | Метод: " + comboBackend->currentText();
+                result_text += "  | Время: " + QString::number(elapsedMs, 'f', 3) + " мс";
+            
                 break;
             }
-            case matrix::DataType::Double: 
+
+            case matrix::DataType::Double:
             {
                 matrix::Matrix<double> mat(size, size);
-                for (int i = 0; i < size; ++i) 
+            
+                for (int i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j) 
+                    for (int j = 0; j < size; ++j)
                     {
                         mat.at(i, j) = ui->tableWidget->item(i, j)->text().toDouble();
                     }
                 }
-                result_text += QString::number(mat.determinant(), 'g', 10) + "  (Тип: double)";
+            
+                QElapsedTimer timer;
+                timer.start();
+            
+                auto det = mat.determinant(selectedBackend());
+            
+                qint64 elapsedNs = timer.nsecsElapsed();
+                double elapsedMs = static_cast<double>(elapsedNs) / 1000000.0;
+            
+                result_text += QString::number(det, 'g', 10) + "  (Тип: double)";
+                result_text += "  | Метод: " + comboBackend->currentText();
+                result_text += "  | Время: " + QString::number(elapsedMs, 'f', 3) + " мс";
+            
                 break;
             }
-            case matrix::DataType::LongDouble: 
+
+            case matrix::DataType::LongDouble:
             {
                 matrix::Matrix<long double> mat(size, size);
-                for (int i = 0; i < size; ++i) 
+            
+                for (int i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j) 
+                    for (int j = 0; j < size; ++j)
                     {
                         mat.at(i, j) = std::stold(ui->tableWidget->item(i, j)->text().toStdString());
                     }
                 }
-                result_text += QString::fromStdString(std::to_string(mat.determinant())) + "  (Тип: long double)";
+            
+                QElapsedTimer timer;
+                timer.start();
+            
+                auto det = mat.determinant(selectedBackend());
+            
+                qint64 elapsedNs = timer.nsecsElapsed();
+                double elapsedMs = static_cast<double>(elapsedNs) / 1000000.0;
+            
+                result_text += QString::fromStdString(std::to_string(det)) + "  (Тип: long double)";
+                result_text += "  | Метод: " + comboBackend->currentText();
+                result_text += "  | Время: " + QString::number(elapsedMs, 'f', 3) + " мс";
+            
                 break;
             }
+
             default:
                 throw std::runtime_error("Неизвестный тип данных");
         }
@@ -178,6 +259,21 @@ void MainWindow::on_btnImport_clicked()
         }
     }
 
+    if (rows > static_cast<size_t>(ui->spinBoxSize->maximum()))
+    {
+        ui->spinBoxSize->setMaximum(static_cast<int>(rows));
+    }
+    
+    auto setCellText = [](QTableWidget *table, int row, int col, const QString &text)
+    {
+        if (!table->item(row, col))
+        {
+            table->setItem(row, col, new QTableWidgetItem);
+        }
+    
+        table->item(row, col)->setText(text);
+    };
+
     if (cols == rows) 
     {
         ui->spinBoxSize->setValue(rows); 
@@ -186,9 +282,9 @@ void MainWindow::on_btnImport_clicked()
         {
             for (size_t j = 0; j < cols; ++j) 
             {
-                ui->tableWidget->item(i, j)->setText(QString::fromStdString(data[i][j]));
+                setCellText(ui->tableWidget, static_cast<int>(i), static_cast<int>(j), QString::fromStdString(data[i][j]));
             }
-            ui->tableVectorB->item(i, 0)->setText("0");
+            setCellText(ui->tableVectorB, static_cast<int>(i), 0, "0");
         }
         QMessageBox::information(this, "Импорт", "Распознана квадратная матрица (Определитель).");
 
@@ -201,9 +297,9 @@ void MainWindow::on_btnImport_clicked()
         {
             for (size_t j = 0; j < rows; ++j) 
             {
-                ui->tableWidget->item(i, j)->setText(QString::fromStdString(data[i][j]));
+                setCellText(ui->tableWidget, static_cast<int>(i), static_cast<int>(j), QString::fromStdString(data[i][j]));
             }
-            ui->tableVectorB->item(i, 0)->setText(QString::fromStdString(data[i][rows]));
+            setCellText(ui->tableVectorB, static_cast<int>(i), 0, QString::fromStdString(data[i][rows]));
         }
         QMessageBox::information(this, "Импорт", "Распознана расширенная матрица (СЛАУ).\nПоследний столбец загружен как вектор B.");
         
@@ -332,7 +428,7 @@ void MainWindow::on_btnSolve_clicked()
             }
         }
 
-        std::vector<double> x = A.solve(B);
+        std::vector<double> x = A.solve(B, selectedBackend());
 
         QString res = "Решение x: (";
         for(size_t i = 0; i < x.size(); ++i) 
@@ -340,6 +436,7 @@ void MainWindow::on_btnSolve_clicked()
             res += QString::number(x[i], 'g', 6) + (i == x.size()-1 ? "" : "; ");
         }
         res += ")";
+        res += "  | Метод: " + comboBackend->currentText();
         ui->labelResult->setText(res);
         ui->labelResult->setStyleSheet("color: #00FF00;");
         lastSlaeResult = res;

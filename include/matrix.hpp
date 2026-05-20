@@ -8,8 +8,18 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef USE_EIGEN
+#include <Eigen/Dense>
+#endif
+
 namespace matrix
 {
+    enum class CalculationBackend
+    {
+        OwnGauss,
+        Eigen
+    };
+
     template <typename type>
     class MatrixMemoryManager 
     {
@@ -283,141 +293,249 @@ namespace matrix
             }
         }
 
-        type determinant() const 
+        type determinant(CalculationBackend backend = CalculationBackend::OwnGauss) const
         {
-            if (this->rows != this->cols || this->rows == 0) 
+            if (this->rows != this->cols || this->rows == 0)
             {
                 throw std::invalid_argument("Matrix must be square for determinant calculation");
             }
-            
+        
             using CalcType = std::conditional_t<std::is_integral_v<type>, double, type>;
-
-            Matrix<CalcType> temp(this->rows, this->cols);
-            for(size_t i = 0; i < this->rows; ++i) 
+        
+        #ifdef USE_EIGEN
+            if (backend == CalculationBackend::Eigen)
             {
-                for(size_t j = 0; j < this->cols; ++j) 
+                Eigen::Matrix<CalcType, Eigen::Dynamic, Eigen::Dynamic> eigenMatrix(
+                    static_cast<Eigen::Index>(this->rows),
+                    static_cast<Eigen::Index>(this->cols)
+                );
+        
+                for (size_t i = 0; i < this->rows; ++i)
+                {
+                    for (size_t j = 0; j < this->cols; ++j)
+                    {
+                        eigenMatrix(
+                            static_cast<Eigen::Index>(i),
+                            static_cast<Eigen::Index>(j)
+                        ) = static_cast<CalcType>(this->at(i, j));
+                    }
+                }
+        
+                CalcType det = eigenMatrix.partialPivLu().determinant();
+        
+                if (std::abs(det) < static_cast<CalcType>(1e-10))
+                {
+                    return static_cast<type>(0);
+                }
+        
+                if constexpr (std::is_integral_v<type>)
+                {
+                    return static_cast<type>(std::round(det));
+                }
+                else
+                {
+                    return static_cast<type>(det);
+                }
+            }
+        #else
+            if (backend == CalculationBackend::Eigen)
+            {
+                throw std::runtime_error("Eigen backend is not available. Build project with -DUSE_EIGEN=ON.");
+            }
+        #endif
+        
+            Matrix<CalcType> temp(this->rows, this->cols);
+        
+            for (size_t i = 0; i < this->rows; ++i)
+            {
+                for (size_t j = 0; j < this->cols; ++j)
                 {
                     temp.at(i, j) = static_cast<CalcType>(this->at(i, j));
                 }
             }
-
+        
             CalcType det = 1;
-            const CalcType epsilon = static_cast<CalcType>(1e-10); 
-
-            for (size_t i = 0; i < this->rows; ++i) 
+            const CalcType epsilon = static_cast<CalcType>(1e-10);
+        
+            for (size_t i = 0; i < this->rows; ++i)
             {
                 size_t pivot = i;
-                for (size_t j = i + 1; j < this->rows; ++j) 
+        
+                for (size_t j = i + 1; j < this->rows; ++j)
                 {
-                    if (std::abs(temp.at(j, i)) > std::abs(temp.at(pivot, i))) 
+                    if (std::abs(temp.at(j, i)) > std::abs(temp.at(pivot, i)))
                     {
                         pivot = j;
                     }
                 }
-
-                if (std::abs(temp.at(pivot, i)) < epsilon) 
+        
+                if (std::abs(temp.at(pivot, i)) < epsilon)
                 {
                     return static_cast<type>(0);
                 }
-
-                if (pivot != i) 
+        
+                if (pivot != i)
                 {
-                    for(size_t k = 0; k < this->cols; ++k) 
+                    for (size_t k = 0; k < this->cols; ++k)
                     {
                         std::swap(temp.at(i, k), temp.at(pivot, k));
                     }
-                    det = -det; 
+        
+                    det = -det;
                 }
-
+        
                 det *= temp.at(i, i);
-
-                for (size_t j = i + 1; j < this->rows; ++j) 
+        
+                for (size_t j = i + 1; j < this->rows; ++j)
                 {
                     CalcType factor = temp.at(j, i) / temp.at(i, i);
-                    for (size_t k = i + 1; k < this->cols; ++k) 
+        
+                    for (size_t k = i + 1; k < this->cols; ++k)
                     {
                         temp.at(j, k) -= factor * temp.at(i, k);
                     }
                 }
             }
-
-            if constexpr (std::is_integral_v<type>) 
+        
+            if constexpr (std::is_integral_v<type>)
             {
                 return static_cast<type>(std::round(det));
-            } 
-            else 
+            }
+            else
             {
                 return static_cast<type>(det);
             }
         }
 
-        std::vector<double> solve(const std::vector<double>& b) const 
+        std::vector<double> solve(
+            const std::vector<double>& b,
+            CalculationBackend backend = CalculationBackend::OwnGauss
+        ) const
         {
-            if (this->rows != this->cols) 
+            if (this->rows != this->cols)
             {
                 throw std::invalid_argument("Matrix must be square");
             }
-            if (b.size() != this->rows) 
+        
+            if (b.size() != this->rows)
             {
                 throw std::invalid_argument("Vector B size mismatch");
             }
-
+        
             size_t n = this->rows;
+        
+        #ifdef USE_EIGEN
+            if (backend == CalculationBackend::Eigen)
+            {
+                Eigen::MatrixXd A(
+                    static_cast<Eigen::Index>(n),
+                    static_cast<Eigen::Index>(n)
+                );
+        
+                Eigen::VectorXd B(static_cast<Eigen::Index>(n));
+        
+                for (size_t i = 0; i < n; ++i)
+                {
+                    B(static_cast<Eigen::Index>(i)) = b[i];
+        
+                    for (size_t j = 0; j < n; ++j)
+                    {
+                        A(
+                            static_cast<Eigen::Index>(i),
+                            static_cast<Eigen::Index>(j)
+                        ) = static_cast<double>(this->at(i, j));
+                    }
+                }
+        
+                Eigen::FullPivLU<Eigen::MatrixXd> lu(A);
+                lu.setThreshold(1e-12);
+        
+                if (!lu.isInvertible())
+                {
+                    throw std::runtime_error("Degenerate matrix");
+                }
+        
+                Eigen::VectorXd solution = lu.solve(B);
+        
+                std::vector<double> x(n);
+        
+                for (size_t i = 0; i < n; ++i)
+                {
+                    x[i] = solution(static_cast<Eigen::Index>(i));
+                }
+        
+                return x;
+            }
+        #else
+            if (backend == CalculationBackend::Eigen)
+            {
+                throw std::runtime_error("Eigen backend is not available. Build project with -DUSE_EIGEN=ON.");
+            }
+        #endif
+        
             Matrix<double> A(n, n);
             std::vector<double> x(n);
             std::vector<double> temp_b = b;
-
-            for(size_t i = 0; i < n; ++i)
+        
+            for (size_t i = 0; i < n; ++i)
             {
-                for(size_t j = 0; j < n; ++j)
+                for (size_t j = 0; j < n; ++j)
                 {
                     A.at(i, j) = static_cast<double>(this->at(i, j));
                 }
             }
-
-            for (size_t i = 0; i < n; ++i) 
+        
+            for (size_t i = 0; i < n; ++i)
             {
                 size_t pivot = i;
-                for (size_t j = i + 1; j < n; ++j) 
+        
+                for (size_t j = i + 1; j < n; ++j)
                 {
-                    if (std::abs(A.at(j, i)) > std::abs(A.at(pivot, i))) 
+                    if (std::abs(A.at(j, i)) > std::abs(A.at(pivot, i)))
                     {
                         pivot = j;
                     }
                 }
-
-                if (std::abs(A.at(pivot, i)) < 1e-12) 
+        
+                if (std::abs(A.at(pivot, i)) < 1e-12)
                 {
                     throw std::runtime_error("Degenerate matrix");
                 }
-
+        
                 std::swap(temp_b[i], temp_b[pivot]);
-                for(size_t k = 0; k < n; ++k) 
+        
+                for (size_t k = 0; k < n; ++k)
                 {
                     std::swap(A.at(i, k), A.at(pivot, k));
                 }
-
-                for (size_t j = i + 1; j < n; ++j) 
+        
+                for (size_t j = i + 1; j < n; ++j)
                 {
                     double factor = A.at(j, i) / A.at(i, i);
+        
                     temp_b[j] -= factor * temp_b[i];
-                    for (size_t k = i; k < n; ++k) 
+        
+                    for (size_t k = i; k < n; ++k)
                     {
                         A.at(j, k) -= factor * A.at(i, k);
                     }
                 }
             }
-
-            for (int i = n - 1; i >= 0; --i) 
+        
+            for (int i = static_cast<int>(n) - 1; i >= 0; --i)
             {
                 double sum = 0;
-                for (size_t j = i + 1; j < n; ++j) 
+        
+                for (size_t j = static_cast<size_t>(i) + 1; j < n; ++j)
                 {
-                    sum += A.at(i, j) * x[j];
+                    sum += A.at(static_cast<size_t>(i), j) * x[j];
                 }
-                x[i] = (temp_b[i] - sum) / A.at(i, i);
+        
+                x[static_cast<size_t>(i)] =
+                    (temp_b[static_cast<size_t>(i)] - sum) /
+                    A.at(static_cast<size_t>(i), static_cast<size_t>(i));
             }
-
+        
             return x;
         }
 

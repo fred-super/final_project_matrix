@@ -1,0 +1,5 @@
+if(EXISTS "/home/fedor/Рабочий стол/finalProject/build_debug/tests[1]_tests.cmake")
+  include("/home/fedor/Рабочий стол/finalProject/build_debug/tests[1]_tests.cmake")
+else()
+  add_test(tests_NOT_BUILT tests_NOT_BUILT)
+endif()
